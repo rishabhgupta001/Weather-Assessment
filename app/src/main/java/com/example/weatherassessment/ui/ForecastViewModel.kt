@@ -21,7 +21,7 @@ class ForecastViewModel(val repository: ForecastRepository) : ViewModel() {
 
     @SuppressLint("CheckResult")
     fun getCurrentWeather(zip: String) {
-        val responseModel = WeatherResponseModel()
+        var responseModel = WeatherResponseModel()
 
         repository.getCurrentWeather(zip)
             .subscribeOn(Schedulers.io())
@@ -33,6 +33,7 @@ class ForecastViewModel(val repository: ForecastRepository) : ViewModel() {
             //below code is working on Main thread
             .subscribe(
                 { success ->
+                    responseModel = success
                     responseModel.statusCode = StatusCode.SUCCESS
                     currentWeather.value = responseModel
                     Log.d(TAG, "success${currentWeather.value?.base}")
@@ -45,9 +46,7 @@ class ForecastViewModel(val repository: ForecastRepository) : ViewModel() {
     }
 
 
-
 }
-
 
 
 /*
