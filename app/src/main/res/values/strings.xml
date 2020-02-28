@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Weather Assessment</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="text_title_forecast">Forecast</string>
+    <string name="text_make_sure_no_data_connection">Make sure you have an active data connection</string>
+
 </resources>
