@@ -34,7 +34,8 @@ class ForecastViewModel(val repository: ForecastRepository) : ViewModel() {
             .subscribe(
                 { success ->
                     responseModel.statusCode = StatusCode.SUCCESS
-                    currentWeather.value = success
+                    currentWeather.value = responseModel
+                    Log.d(TAG, "success${currentWeather.value?.base}")
                 }, { error ->
                     Log.d(TAG, "api error ${error.message}")
                     responseModel.msg = error.localizedMessage!!
@@ -43,7 +44,11 @@ class ForecastViewModel(val repository: ForecastRepository) : ViewModel() {
                 })
     }
 
+
+
 }
+
+
 
 /*
     var weatherData: MutableLiveData<WeatherDataModel> = MutableLiveData()

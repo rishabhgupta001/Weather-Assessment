@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherassessment.R
 import com.example.weatherassessment.data.network.ApiService
@@ -16,11 +15,9 @@ import com.example.weatherassessment.data.network.NetworkConnectionInterceptor
 import com.example.weatherassessment.data.network.StatusCode
 import com.example.weatherassessment.data.repository.ForecastRepository
 import com.example.weatherassessment.databinding.FragmentForecastBinding
+import com.example.weatherassessment.model.WeatherResponseModel
 import com.example.weatherassessment.utils.Utils
 import kotlinx.android.synthetic.main.fragment_forecast.*
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.x.kodein
-import org.kodein.di.generic.instance
 
 
 /**
@@ -31,6 +28,9 @@ class ForecastFragment : Fragment() {
     private val factory: ForecastViewModelFactory by instance()*/
 
     private val TAG = ForecastFragment::class.java.simpleName
+    val zip = "110030,IN"
+    val city  = "New Delhi"
+    val Country = "India"
 
     private val viewModel: ForecastViewModel by lazy {
         ViewModelProvider(
@@ -76,24 +76,39 @@ class ForecastFragment : Fragment() {
     }
 
     private fun observeCurrentWeatherByZip() {
-        viewModel.currentWeather.observe(viewLifecycleOwner, Observer { success ->
-            when (success?.statusCode) {
-                StatusCode.START -> {
-                    Utils.hideKeyPad(activity!!)
-                    progress_bar.visibility = View.VISIBLE
-                }
-                StatusCode.SUCCESS -> {
-                    progress_bar.visibility = View.GONE
-                    Log.d("DEBUG", "Base ${success.base.toString()}")
+        viewModel.currentWeather.observe(
+            viewLifecycleOwner,
+            androidx.lifecycle.Observer { success ->
+                when (success?.statusCode) {
+                    StatusCode.START -> {
+                        Utils.hideKeyPad(activity!!)
+                        progress_bar.visibility = View.VISIBLE
+                    }
+                    StatusCode.SUCCESS -> {
+                        progress_bar.visibility = View.GONE
+                        setUpView(success)
+                        Log.d("DEBUG", "Base ${success.base.toString()}")
 
+                    }
+                    StatusCode.ERROR -> {
+                        progress_bar.visibility = View.GONE
+                        Utils.showToast(context!!, success.msg)
+                    }
                 }
-                StatusCode.ERROR -> {
-                    progress_bar.visibility = View.GONE
-                    Utils.showToast(context!!, success.msg)
-                }
-            }
-        })
+            })
 
+    }
+
+
+    private fun setUpView(data: WeatherResponseModel) {
+        val str = "${city}, ${Country}"
+        cityText.text = str
+        condDescr.text = data.weather?.get(0)?.description
+        temp.text = data.main?.temp.toString()
+        press.text = data.main?.pressure.toString()
+        hum.text = data.main?.humidity.toString()
+        windSpeed.text = data.wind?.speed.toString()
+        windDeg.text = data.wind?.deg.toString()
     }
 
 }
