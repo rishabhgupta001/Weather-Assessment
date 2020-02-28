@@ -71,13 +71,12 @@ class ForecastFragment : Fragment() {
      * init
      */
     private fun init() {
-        observeCurrentWeatherByZip()
         viewModel.getCurrentWeather("110030,IN")
-
+        observeCurrentWeatherByZip()
     }
 
     private fun observeCurrentWeatherByZip() {
-        viewModel.currentWeatherLiveData.observe(viewLifecycleOwner, Observer { success ->
+        viewModel.currentWeather.observe(viewLifecycleOwner, Observer { success ->
             when (success?.statusCode) {
                 StatusCode.START -> {
                     Utils.hideKeyPad(activity!!)
@@ -85,7 +84,7 @@ class ForecastFragment : Fragment() {
                 }
                 StatusCode.SUCCESS -> {
                     progress_bar.visibility = View.GONE
-                    Log.d("","${success.base}")
+                    Log.d("DEBUG", "Base ${success.base.toString()}")
 
                 }
                 StatusCode.ERROR -> {
@@ -93,8 +92,6 @@ class ForecastFragment : Fragment() {
                     Utils.showToast(context!!, success.msg)
                 }
             }
-            if (viewModel.currentWeatherLiveData.value != null)
-                viewModel.currentWeatherLiveData.value = null
         })
 
     }
